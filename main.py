@@ -1,9 +1,9 @@
-'''
+import os
 from openai import OpenAI
 
 client = OpenAI(
-    base_url = '',
-    api_key = ''
+    base_url = os.environ.get("OPENAI_BASE_URL"),
+    api_key = os.environ.get("OPENAI_API_KEY")
 )
 
 print('\nSystem: Welcome! Let\'s start chatting! You may end a conversation by inputting \'End\'.')
@@ -39,4 +39,3 @@ while True:
     except Exception as e:
         print(f"An error occurred: {e}")
         break
-'''
