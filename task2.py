@@ -10,12 +10,14 @@ collection = chroma_client.get_collection(name = 'task2')
 openai_base_url = os.environ.get("OPENAI_BASE_URL")
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 
-st.title("📝 File Q&A with OpenAI")
+st.title("📝 Front-end Innovation Q&A with OpenAI")
 if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "system", "content": "Ask something about the articles in our local db"}]
+    st.session_state["messages"] = [{"role": "system", "content": "You're a helpful assistant which answer questions about Front-end Innovation team."}]
+    st.session_state["messages"] = [{"role": "assistant", "content": "Ask something about the Front-end Innovation team"}]
 
 for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+    if msg["role"] != "system":
+        st.chat_message(msg["role"]).write(msg["content"])
 
 client = OpenAI(
     base_url = openai_base_url,
@@ -23,10 +25,6 @@ client = OpenAI(
 )
 
 if prompt := st.chat_input():
-    if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
-
     # Record user input
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display the input on UI
@@ -37,14 +35,14 @@ if prompt := st.chat_input():
         n_results = 20,
     )
     documents = collection.get(ids = results['ids'][0])['documents']
-    article = ''
+    context = ''
     for chunk in documents:
-        article += f"""{chunk}\n\n"""
-    message = f"""Answer the question using only the article provided.\n\nQuestion: {prompt}\n\nArticle:\n\n{article}\n"""
+        context += f"""{chunk}\n\n"""
+    message = f"""Answer the question using only the context provided.\n\nQuestion: {prompt}\n\Context:\n\n{context}\n"""
     # Record system query result
     st.session_state.messages.append({"role": "system", "content": message})
     # Display the system query result on UI
-    st.chat_message("system").write(message)
+    # st.chat_message("system").write(message)
 
     # Call OpenAI API with history
     response = client.chat.completions.create(
@@ -52,7 +50,7 @@ if prompt := st.chat_input():
         messages = st.session_state.messages,
     )
     # Get response
-    message = f"""Answer:\n\n{response.choices[0].message.content}"""
+    message = response.choices[0].message.content
     # Record response
     st.session_state.messages.append({"role": "assistant", "content": message})
     # Write response to history
