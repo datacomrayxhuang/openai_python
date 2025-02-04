@@ -3,7 +3,7 @@ import streamlit as st
 import chromadb
 from openai import OpenAI
 
-chroma_client = chromadb.PersistentClient()
+chroma_client = chromadb.PersistentClient(path = "./db/task2/chroma")
 collection = chroma_client.get_collection(name = 'task2')
 
 # Get api key and base url from .env file
