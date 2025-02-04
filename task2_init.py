@@ -8,7 +8,13 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 chroma_client = chromadb.PersistentClient(path = "./db/task2/chroma", settings = chromadb.Settings(allow_reset = True))
 chroma_client.reset()
 embedding_function = SentenceTransformerEmbeddings(model_name = "all-MiniLM-L6-v2")
-file_paths = ["knowledge_base/task2/team_info.txt", "knowledge_base/task2/cv_ray.pdf", "knowledge_base/task2/cv_mohamed.pdf"]
+file_paths = [
+    "knowledge_base/task2/team_info.txt",
+    "knowledge_base/task2/cv_ray.pdf",
+    "knowledge_base/task2/cv_mohamed.pdf",
+    "knowledge_base/task2/cv_yang.pdf",
+    "knowledge_base/task2/cv_jesse.pdf",
+]
 # file_paths = ["the-fellowship-of-the-ring.pdf", "google-terms-of-service.pdf"]
 
 for file_path in file_paths:
