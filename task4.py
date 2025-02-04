@@ -121,6 +121,7 @@ if prompt != None and prompt != '':
         else:
             st.chat_message("assistant").write("Fine tuning the draft.")
             new_draft = fine_tune_draft(prompt, draft)
+            step += 1
             if new_draft != None:
                 draft = new_draft
     
