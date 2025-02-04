@@ -30,11 +30,13 @@ client = OpenAI(
     api_key = openai_api_key,
 )
 
-# --------------------------------------------------------------
-# Step 1: Define the response format in a Pydantic model
-# --------------------------------------------------------------
-
-locally_stored_documents = ["auckland_attraction.pdf"]
+locally_stored_documents = [
+    "auckland_attraction.pdf",
+    "hamilton_waikato_attraction.pdf",
+    "rotorua_attraction.pdf",
+    "taupo_attraction.pdf",
+    "tauranga_bay_of_plenty_attraction.pdf",
+]
 
 class EventExtraction(BaseModel):
     """First LLM call: Extract basic event information"""

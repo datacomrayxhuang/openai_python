@@ -8,7 +8,13 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 chroma_client = chromadb.PersistentClient(path = "./db/task3/chroma", settings = chromadb.Settings(allow_reset=True))
 chroma_client.reset()
 embedding_function = SentenceTransformerEmbeddings(model_name = "all-MiniLM-L6-v2")
-file_paths = ["knowledge_base/task3/auckland.pdf"]
+file_paths = [
+    "knowledge_base/task3/auckland_attraction.pdf",
+    "knowledge_base/task3/hamilton_waikato_attraction.pdf",
+    "knowledge_base/task3/rotorua_attraction.pdf",
+    "knowledge_base/task3/taupo_attraction.pdf",
+    "knowledge_base/task3/tauranga_bay_of_plenty_attraction.pdf",
+]
 
 for file_path in file_paths:
     if file_path.endswith(".pdf"):
@@ -28,5 +34,3 @@ for file_path in file_paths:
         embedding = embedding_function,
         client = chroma_client,
     )
-
-    print(f"Added {len(chunked_documents)} chunks to chroma db")

@@ -30,6 +30,7 @@ if prompt := st.chat_input():
     # Display the input on UI
     st.chat_message("user").write(prompt)
 
+    # Query local data
     results = collection.query(
         query_texts = [prompt],
         n_results = 20,
@@ -38,11 +39,10 @@ if prompt := st.chat_input():
     context = ''
     for chunk in documents:
         context += f"""{chunk}\n\n"""
-    message = f"""Answer the question using only the context provided.\n\nQuestion: {prompt}\n\Context:\n\n{context}\n"""
+
+    message = f"""Answer the question using only the context provided.\n\nQuestion: {prompt}\nContext:\n\n{context}\n"""
     # Record system query result
     st.session_state.messages.append({"role": "system", "content": message})
-    # Display the system query result on UI
-    # st.chat_message("system").write(message)
 
     # Call OpenAI API with history
     response = client.chat.completions.create(
@@ -50,8 +50,8 @@ if prompt := st.chat_input():
         messages = st.session_state.messages,
     )
     # Get response
-    message = response.choices[0].message.content
+    result = response.choices[0].message.content
     # Record response
-    st.session_state.messages.append({"role": "assistant", "content": message})
+    st.session_state.messages.append({"role": "assistant", "content": result})
     # Write response to history
-    st.chat_message("assistant").write(message)
+    st.chat_message("assistant").write(result)

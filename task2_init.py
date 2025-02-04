@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-chroma_client = chromadb.PersistentClient(path = "./db/task2/chroma", settings = chromadb.Settings(allow_reset=True))
+chroma_client = chromadb.PersistentClient(path = "./db/task2/chroma", settings = chromadb.Settings(allow_reset = True))
 chroma_client.reset()
 embedding_function = SentenceTransformerEmbeddings(model_name = "all-MiniLM-L6-v2")
 file_paths = ["knowledge_base/task2/team_info.txt", "knowledge_base/task2/cv_ray.pdf", "knowledge_base/task2/cv_mohamed.pdf"]
@@ -24,10 +24,8 @@ for file_path in file_paths:
 
     Chroma.from_documents(
         collection_name = "task2",
-        persist_directory = "./db/task3/chroma",
+        persist_directory = "./db/task2/chroma",
         documents = chunked_documents,
         embedding = embedding_function,
         client = chroma_client,
     )
-
-    print(f"Added {len(chunked_documents)} chunks to chroma db")

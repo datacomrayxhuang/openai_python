@@ -26,10 +26,6 @@ client = OpenAI(
     api_key = openai_api_key,
 )
 
-# --------------------------------------------------------------
-# Step 1: Define the response format in a Pydantic model
-# --------------------------------------------------------------
-
 class EventExtraction(BaseModel):
     description: str = Field(description = "Raw description of the event")
     is_document_generating_event: bool = Field(description = "Whether this text describes a document generating request?")

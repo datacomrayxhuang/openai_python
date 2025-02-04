@@ -11,19 +11,15 @@ st.caption("🚀 A Streamlit chatbot powered by OpenAI")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
-for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+for message in st.session_state.messages:
+    st.chat_message(message["role"]).write(message["content"])
+
+client = OpenAI(
+    base_url = openai_base_url,
+    api_key = openai_api_key,
+)
 
 if prompt := st.chat_input():
-    if not openai_api_key:
-        st.info("Please add your OpenAI API key to continue.")
-        st.stop()
-
-    client = OpenAI(
-        base_url = openai_base_url,
-        api_key = openai_api_key,
-    )
-
     # Record user input
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display the input on UI
@@ -34,8 +30,8 @@ if prompt := st.chat_input():
         messages = st.session_state.messages,
     )
     # Get response
-    msg = response.choices[0].message.content
+    result = response.choices[0].message.content
     # Record response
-    st.session_state.messages.append({"role": "assistant", "content": msg})
+    st.session_state.messages.append({"role": "assistant", "content": result})
     # Write response to history
-    st.chat_message("assistant").write(msg)
+    st.chat_message("assistant").write(result)
