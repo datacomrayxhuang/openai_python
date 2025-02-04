@@ -4,6 +4,7 @@ import streamlit as st
 import chromadb
 from pydantic import BaseModel, Field
 from openai import OpenAI
+from openai.types.chat.chat_completion import ChatCompletionMessage
 
 chroma_client = chromadb.PersistentClient(path = "./db/task3/chroma")
 collection = chroma_client.get_collection(name = 'task3')
@@ -22,7 +23,9 @@ if "disabled" not in st.session_state:
     st.session_state.disabled = False
 
 for msg in st.session_state.messages:
-    if msg["role"] != "system":
+    if type(msg) == ChatCompletionMessage:
+        msg = msg.model_dump()
+    if msg["role"] != "system" and msg["role"] != "tool" and msg["content"] != None:
         st.chat_message(msg["role"]).write(msg["content"])
 
 client = OpenAI(
@@ -256,10 +259,13 @@ def make_tool_calls(completion):
         
         st.session_state.messages.append({"role": "tool", "tool_call_id": tool_call.id, "content": json.dumps(function_result)})
 
+def enable():
+    st.session_state.disabled = False
+
 def disable():
     st.session_state.disabled = True
 
-prompt = st.chat_input(disabled = st.session_state.disabled, on_submit = disable)
+prompt = st.chat_input(disabled = st.session_state.disabled)
 
 if prompt != None and prompt != '':
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -293,3 +299,4 @@ if prompt != None and prompt != '':
     
     st.session_state.messages.append({"role": "assistant", "content": result})
     st.chat_message("assistant").write(result)
+    enable()
