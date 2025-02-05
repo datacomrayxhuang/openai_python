@@ -242,7 +242,6 @@ def make_tool_calls(tool_calls: list[ChatCompletionMessageToolCall]):
 
         step_messages.append(step_message)
         st.chat_message("assistant").write(step_message)
-        # st.session_state.messages.append({"role": "assistant", "content": step_message})
 
         function_result = call_function(name, args)
         # st.chat_message("system").write(function_result)
@@ -258,34 +257,35 @@ def make_tool_calls(tool_calls: list[ChatCompletionMessageToolCall]):
         st.session_state.messages.append({"role": "assistant", "content": step_message})
 
 if prompt := st.chat_input():
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    st.chat_message("user").write(prompt)
+    try:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.chat_message("user").write(prompt)
 
-    sys_message = f"User wants to achieve the goal of {prompt}. Start with calling analyse_input if you haven't, break it down into steps, in each step, only use tools provided."
-    st.session_state.messages.append({"role": "system", "content": sys_message})
-    completion = client.chat.completions.create(
-        model = "Gpt4o",
-        messages = st.session_state.messages,
-        tools = tools,
-    )
-    result = completion.choices[0].message.content
-
-    max_steps = 20
-    step = 1
-    
-    while result == None and step <= max_steps:
-        # st.session_state.messages.append({"role": "system", "content": "What is the next step or next tool to call?"})
-        # st.chat_message("system").write(st.session_state.messages)
+        sys_message = f"User wants to achieve the goal of {prompt}. Start with calling analyse_input if you haven't, break it down into steps, in each step, only use tools provided."
+        st.session_state.messages.append({"role": "system", "content": sys_message})
         completion = client.chat.completions.create(
             model = "Gpt4o",
             messages = st.session_state.messages,
             tools = tools,
         )
-        step += 1
         result = completion.choices[0].message.content
-        if completion.choices[0].message.tool_calls != None:
-            # st.chat_message("system").write(completion.choices[0].message.tool_calls)
-            make_tool_calls(completion.choices[0].message.tool_calls)
-    
-    st.session_state.messages.append({"role": "assistant", "content": result})
-    st.chat_message("assistant").write(result)
+
+        max_steps = 20
+        step = 1
+        
+        while result == None and step <= max_steps:
+            completion = client.chat.completions.create(
+                model = "Gpt4o",
+                messages = st.session_state.messages,
+                tools = tools,
+            )
+            step += 1
+            result = completion.choices[0].message.content
+            if completion.choices[0].message.tool_calls != None:
+                make_tool_calls(completion.choices[0].message.tool_calls)
+        
+        st.session_state.messages.append({"role": "assistant", "content": result})
+        st.chat_message("assistant").write(result)
+    except Exception as e:
+        st.error(f"Error: {e}")
+        st.stop()
