@@ -225,7 +225,6 @@ def call_function(name, args):
         return get_trip_summary(**args)
 
 def make_tool_calls(tool_calls: list[ChatCompletionMessageToolCall]):
-    st.session_state.messages.append(completion.choices[0].message)
     step_messages = []
 
     for tool_call in tool_calls:
@@ -282,6 +281,7 @@ if prompt := st.chat_input():
             step += 1
             result = completion.choices[0].message.content
             if completion.choices[0].message.tool_calls != None:
+                st.session_state.messages.append(completion.choices[0].message)
                 make_tool_calls(completion.choices[0].message.tool_calls)
         
         st.session_state.messages.append({"role": "assistant", "content": result})
