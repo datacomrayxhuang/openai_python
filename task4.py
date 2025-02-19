@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import streamlit as st
 from pydantic import BaseModel, Field
 from openai import OpenAI
@@ -6,8 +7,9 @@ from openai.types.chat.chat_completion import ChatCompletionMessage
 from openai.types.chat.chat_completion_message_param import ChatCompletionMessageParam
 
 # Get api key and base url from .env file
-openai_base_url = os.environ.get("OPENAI_BASE_URL")
-openai_api_key = os.environ.get("OPENAI_API_KEY")
+load_dotenv()
+openai_base_url = os.getenv("OPENAI_BASE_URL")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Basic UI set up
 st.title("📝 Dynamic Document Generator with OpenAI")

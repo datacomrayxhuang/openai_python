@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import json
 import streamlit as st
 from pydantic import BaseModel, Field
@@ -9,8 +10,9 @@ from openai.types.chat.parsed_chat_completion import ParsedChatCompletion
 from subprocess import run
 
 # Get api key and base url from .env file
-openai_base_url = os.environ.get("OPENAI_BASE_URL")
-openai_api_key = os.environ.get("OPENAI_API_KEY")
+load_dotenv()
+openai_base_url = os.getenv("OPENAI_BASE_URL")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Basic UI set up
 st.title("📝 OpenAI Python Coding Assistant")
@@ -67,9 +69,9 @@ tools = [
     },
 ]
 
-# First tool LLM can call to get code from code.py
+# First tool LLM can call to get code from output.py
 def get_local_code() -> str:
-    with open("code.py", "r") as file:
+    with open("output.py", "r") as file:
         code = file.read()
         file.close()
     return code
@@ -102,18 +104,18 @@ def handle_result(result: EventExtraction):
     st.session_state.messages.append({"role": "assistant", "content": result.general_output})
     st.chat_message("assistant").write(result.general_output)
     if result.generated_code != '':
-        with open("code.py", "w") as file:
+        with open("output.py", "w") as file:
             file.write(result.generated_code)
             file.close()
         try:
-            if os.path.exists("./code.py"):
-                os.chmod("./code.py", 0o755)
+            if os.path.exists("./output.py"):
+                os.chmod("./output.py", 0o755)
                 st.info(f"Excecuting code...")
-                output = run(["python", "code.py"], capture_output = True, timeout = 30).stdout.decode("utf-8")
+                output = run(["python", "output.py"], capture_output = True, timeout = 30).stdout.decode("utf-8")
                 st.info(f"Finished running")
-                st.info(f"You may find the code in code.py.\n\nExcecuted code, output:\n\n{output}")
+                st.info(f"You may find the code in output.py.\n\nExcecuted code, output:\n\n{output}")
             else:
-                print("File not found:", "./code.py")
+                print("File not found:", "./output.py")
         except PermissionError:
             print("Permission denied: You don't have the necessary permissions to change the permissions of this file.")
 

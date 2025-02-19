@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import json
 import streamlit as st
 import chromadb
@@ -12,8 +13,9 @@ chroma_client = chromadb.PersistentClient(path = "./db/task3/chroma")
 collection = chroma_client.get_collection(name = 'task3')
 
 # Get api key and base url from .env file
-openai_base_url = os.environ.get("OPENAI_BASE_URL")
-openai_api_key = os.environ.get("OPENAI_API_KEY")
+load_dotenv()
+openai_base_url = os.getenv("OPENAI_BASE_URL")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Basic UI set up
 st.title("📝 Trip planner with OpenAI")

@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import streamlit as st
 import chromadb
 from openai import OpenAI
@@ -9,15 +10,16 @@ chroma_client = chromadb.PersistentClient(path = "./db/task2/chroma")
 collection = chroma_client.get_collection(name = 'task2')
 
 # Get api key and base url from .env file
-openai_base_url = os.environ.get("OPENAI_BASE_URL")
-openai_api_key = os.environ.get("OPENAI_API_KEY")
+load_dotenv()
+openai_base_url = os.getenv("OPENAI_BASE_URL")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # Basic UI set up
-st.title("📝 Front-end Innovation Q&A with OpenAI")
+st.title("📝 Local knowledge base Q&A with OpenAI")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [
-        {"role": "system", "content": "You're a helpful assistant which answer questions about Front-end Innovation team."},
-        {"role": "assistant", "content": "Ask something about the Front-end Innovation team"}
+        {"role": "system", "content": "You're a helpful assistant which answer questions about files/contents stored in local knowledge base."},
+        {"role": "assistant", "content": "Ask something in the local knowledge base"}
     ]
 
 for message in st.session_state.messages:
